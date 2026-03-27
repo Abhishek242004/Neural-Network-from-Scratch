@@ -1,4 +1,4 @@
 class Optimizer:
-    def update(self,layers):
+    def update(self,layer):
         raise NotImplementedError
     
