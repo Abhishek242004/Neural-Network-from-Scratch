@@ -2,6 +2,8 @@ import numpy as np
 class Sequential:
     def __init__(self,layers):
         self.layers=layers
+        self.loss_fn = None
+        self.optimizer = None
     
     def forward(self,x):
         for layer in self.layers:
@@ -14,6 +16,8 @@ class Sequential:
         return grad
 
     def update(self):
+        if hasattr(self.optimizer,"t"):
+            self.optimizer.t+=1
         for layer in self.layers:
             self.optimizer.update(layer)
 
@@ -22,12 +26,19 @@ class Sequential:
         self.optimizer=optimizer
 
     
-    def train(self,x,y,epochs=5,batch_size=32):
+    def train(self,x,y,epochs=5,batch_size=32, tracker=None):
         if self.loss_fn is None or self.optimizer is None:
             raise ValueError("Call the compile() function before training")
+        
+        # Set tracker for optimizer
+        if tracker and hasattr(self.optimizer, 'set_tracker'):
+            self.optimizer.set_tracker(tracker)
+        
         n=x.shape[0]
         num_batch=int(np.ceil(n/batch_size))
         for epoch in range(epochs):
+            if tracker:
+                tracker.log_epoch_start()
             
             indices=np.random.permutation(n)
             x_shuffled=x[indices]
@@ -49,13 +60,20 @@ class Sequential:
                 #Backward prop
                 grad=self.loss_fn.backward()
                 self.backward(grad)
-
+                
+                # Log gradients after backprop
+                if tracker:
+                    for layer in self.layers:
+                        if hasattr(layer, 'grad_weight'):
+                            tracker.log_layer(layer)
 
                 #Update weights and bias
                 self.update()
             
             #Average loss
             avg_epoch=epoch_loss/num_batch
+            if tracker:
+                tracker.log_loss(avg_epoch)
             print(f"Epoch {epoch+1}, Loss: {avg_epoch}")
 
     def predict(self, x, mode="raw", threshold=0.5):
