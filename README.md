@@ -437,12 +437,12 @@ MIT License - See LICENSE file for details
 
 ## Citation
 
-If you use this framework in your research or projects, please cite:
+To cite this framework in academic or professional work, use the following format:
 
 ```bibtex
-@software{nn_from_scratch_2026,
-  title={Neural Network from Scratch},
-  author={Your Name},
+@software{neural_network_from_scratch_2026,
+  title={Neural Network Framework: A NumPy-Based Implementation},
+  author={Abhishek},
   year={2026},
   url={https://github.com/yourusername/FS}
 }
@@ -454,4 +454,4 @@ Built as an educational tool to understand deep learning fundamentals. Inspired 
 
 ---
 
-**Start learning neural networks from scratch!** 🧠🔧
+**Start learning neural networks from scratch!** 
